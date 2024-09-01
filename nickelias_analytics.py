@@ -69,6 +69,7 @@ def fetch_and_write_txt_data(folder_name, filename, url):
         print(f"Text processing complete. Results saved to {output_path}")
     
 
+
 # Function 2: Fetching data from a url and writing to a .csv file
 def write_csv_file(folder_name, filename, data):
     file_path = pathlib.Path(folder_name).joinpath(filename) # use pathlib to join paths
@@ -86,6 +87,41 @@ def fetch_and_write_csv_data(folder_name, filename, url):
         write_csv_file(folder_name, filename, csv_data)
     else:
         print(f"Failed to fetch CSV data: {response.status_code}")
+
+def process_csv_data(folder_name, input_filename, output_filename):
+    file_path = pathlib.Path(folder_name).joinpath(input_filename)
+    
+    # Initialize variables
+    row_count = 0
+    column_summaries = []
+    data = []
+    
+    # Read CSV file and process data
+    with file_path.open('r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)  # Extract header row
+        column_summaries = ['Column Summary:'] + headers  # Initialize column summaries
+        
+        for row in reader:
+            row_count += 1
+            data.append(tuple(row))  # Convert each row to a tuple
+    
+    # Analyze data (example: count entries per column)
+    column_counts = [0] * len(headers)
+    for row in data:
+        for i, value in enumerate(row):
+            if value:  # Count non-empty values
+                column_counts[i] += 1
+    
+    # Write the results to an output text file
+    output_path = pathlib.Path(folder_name).joinpath(output_filename)
+    with output_path.open('w', encoding='utf-8') as output_file:
+        output_file.write(f"Total Rows: {row_count}\n")
+        output_file.write(f"\nColumn Summaries:\n")
+        for header, count in zip(headers, column_counts):
+            output_file.write(f"{header}: {count} entries\n")
+    
+    print(f"CSV processing complete. Results saved to {output_path}")
 
 
 # Function 3: Fetching data from a url and writing to a .xlsx file
