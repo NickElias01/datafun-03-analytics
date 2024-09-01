@@ -1,0 +1,23 @@
+Total Rows: 153
+
+Column Summaries:
+Country name: 153 entries
+Regional indicator: 153 entries
+Ladder score: 153 entries
+Standard error of ladder score: 153 entries
+upperwhisker: 153 entries
+lowerwhisker: 153 entries
+Logged GDP per capita: 153 entries
+Social support: 153 entries
+Healthy life expectancy: 153 entries
+Freedom to make life choices: 153 entries
+Generosity: 153 entries
+Perceptions of corruption: 153 entries
+Ladder score in Dystopia: 153 entries
+Explained by: Log GDP per capita: 153 entries
+Explained by: Social support: 153 entries
+Explained by: Healthy life expectancy: 153 entries
+Explained by: Freedom to make life choices: 153 entries
+Explained by: Generosity: 153 entries
+Explained by: Perceptions of corruption: 153 entries
+Dystopia + residual: 153 entries
