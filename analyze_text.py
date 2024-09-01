@@ -1,62 +1,52 @@
-import logging
-import requests
+"""
+This module demonstrates the following skills:
+
+1. Fetching data from the web using the `requests` module.
+2. Processing the fetched data using Python collections such as lists, dictionaries, and sets.
+3. Writing the processed data to different file formats, including text files, CSV, and JSON.
+
+The module is designed to showcase the ability to interact with web data, manipulate it in memory, and then save it in various formats for further analysis or use.
+"""
 
 
-# Configure logging - change level to DEBUG and re-run, to ERROR and rerun 
-logging.basicConfig(
-  filename='text_analysis.log', 
-  level=logging.INFO, 
-  filemode='w', 
-  format='%(name)s.%(levelname)s.%(message)s'
-)
+# Standard library imports
+import csv
+import pathlib 
 
-# Get a configured logger instance and name it logger
-logger = logging.getLogger()
+# External library imports (requires virtual environment)
+import requests  
 
-
-# Set url
-url = 'https://www.gutenberg.org/ebooks/1112.txt.utf-8'
-logger.debug(f"Requesting URL: {url}") 
-
-# Request response object
-response = requests.get(url)
-logger.debug(f"Response object: {response}")
-
-if response.status_code == 200:
-    text = response.text.lower()
-    logger.info("Fetched text successfully.")
-else:
-    logger.error(f"Failed to fetch text. Status code: {response.status_code}")
-    text = ""
+# Local module imports
+import utils_nickelias      
+import nickelias_project_setup 
 
 
-# Processing text data
-words = text.split()
-unique_words = set(words)
-logger.info(f"Unique words count: {len(unique_words)}")
+def fetch_and_write_txt_data(folder_name, filename, url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Call your write function to save the response content
+        write_txt_file(folder_name,filename, response.text)
+    else:
+        print(f"Failed to fetch data: {response.status_code}")
+
+def fetch_and_write_excel_data(folder_name, filename, url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Call your write function to save the response content
+        write_excel_file(folder_name,filename, response.content)
+    else:
+        print(f"Failed to fetch Excel data: {response.status_code}")
 
 
-# Writing unique words to a file
-with open('unique_words.txt', 'w') as file:
-    for word in unique_words:
-        file.write(word + '\n')
-
-logger.info("Unique words written to unique_words.txt")
-
+def write_txt_file(folder_name, filename, data):
+    file_path = pathlib.Path(folder_name).join_path(filename) # use pathlib to join paths
+    with file_path.open('w') as file:
+        file.write(data)
+        print(f"Text data saved to {file_path}")
 
 
-# Splitting text by newline into a list of lines
-lines = text.split('\n')
-
-# Count total lines
-logger.info(f"Total number of lines: {len(lines)}")
-
-longest_line = max(lines, key=len)
-logger.info(f"Longest line: {longest_line}")
-
-shortest_line = min(lines, key=len)
-logger.info(f"Shortest line: {shortest_line}")
-
-# reverse the lines
-reversed_lines = lines[::-1]
-logger.info(f"First 5 lines in reverse order: {reversed_lines[:5]}")
+def write_excel_file(folder_name, filename, data):
+    file_path = pathlib.Path(folder_name).join_path(filename) # use pathlib to join paths
+    with open(file_path, 'wb') as file:
+        file.write(data)
+        print(f"Excel data saved to {file_path}")
