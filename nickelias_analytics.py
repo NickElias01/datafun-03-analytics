@@ -238,6 +238,9 @@ def process_json_data(folder_name, input_filename, output_filename):
 def main():
     ''' Main function to demonstrate module capabilities. '''
 
+    # Print byline from imported module
+    print(f"Byline: {utils_nickelias.byline}")
+    
     # Define the prefix for the folders
     prefix = 'data-'
 
