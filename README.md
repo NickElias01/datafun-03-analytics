@@ -17,3 +17,26 @@ In Visual Studio Code, create a .gitignore file if it doesn’t already exist.
 Add the following lines to the .gitignore file to ignore the .vscode/ and .venv/ directories:
 
 Save the file to ensure these directories are not tracked by Git.
+
+
+# datafun-03-project
+
+## Create Project Virtual Environment
+
+On Windows, create a project virtual environment in the .venv folder. 
+
+```shell
+
+py -m venv .venv
+.venv\Scripts\Activate
+py -m pip install -r requirements.txt
+
+```
+
+## Git add and commit 
+
+```shell
+git add .
+git commit -m "add .gitignore, cmds to readme"
+git push origin main
+```
