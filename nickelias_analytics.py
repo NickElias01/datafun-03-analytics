@@ -40,11 +40,12 @@ def write_txt_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing text file {file_path}: {e}")
 
-def fetch_and_write_txt_data(folder_name, filename, url):
+def fetch_and_write_txt_data(folder_name, filename, url, verify=True):
     """Fetch data from a URL and write it to a text file."""
     try:
-        response = requests.get(url, verify=False)  # Disable SSL verification
+        response = requests.get(url, verify=True)  # Enable SSL verification
         response.raise_for_status()  # Raise HTTPError for bad responses
+        response.encoding = 'utf-8'  # Ensure the response is interpreted as UTF-8
         write_txt_file(folder_name, filename, response.text)
     except requests.RequestException as e:
         logging.error(f"Failed to fetch data from {url}: {e}")
@@ -88,7 +89,7 @@ def write_csv_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing CSV file {file_path}: {e}")
 
-def fetch_and_write_csv_data(folder_name, filename, url):
+def fetch_and_write_csv_data(folder_name, filename, url, verify=True):
     """Fetch data from a URL and write it to a CSV file."""
     try:
         response = requests.get(url)
@@ -145,7 +146,7 @@ def write_excel_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing Excel file {file_path}: {e}")
 
-def fetch_and_write_excel_data(folder_name, filename, url):
+def fetch_and_write_excel_data(folder_name, filename, url, verify=True):
     """Fetch data from a URL and write it to an Excel file."""
     try:
         response = requests.get(url)
@@ -192,7 +193,7 @@ def write_json_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing JSON file {file_path}: {e}")
 
-def fetch_and_write_json_data(folder_name, filename, url):
+def fetch_and_write_json_data(folder_name, filename, url, verify=True):
     """Fetch data from a URL and write it to a JSON file."""
     try:
         response = requests.get(url)
@@ -251,31 +252,31 @@ def main():
     base_dir = pathlib.Path(__file__).parent.joinpath('data')
 
     # Define URLs for data fetching
-    #txt_url = 'https://en.wikipedia.org/wiki/Coffee'
+    txt_url = 'https://www.gutenberg.org/files/1513/1513-0.txt'
     csv_url = 'https://raw.githubusercontent.com/MainakRepositor/Datasets/master/World%20Happiness%20Data/2020.csv'
     excel_url = 'https://github.com/bharathirajatut/sample-excel-dataset/raw/master/cattle.xls'
     json_url = 'http://api.open-notify.org/astros.json'
 
     # Define filenames for data storage
-    #txt_filename = 'data.txt'
+    txt_filename = 'data.txt'
     csv_filename = 'data.csv'
     excel_filename = 'data.xls'
     json_filename = 'data.json'
 
     # Define full paths for each folder
-    #txt_folder = pathlib.Path(base_dir).joinpath(f'{prefix}txt')
+    txt_folder = pathlib.Path(base_dir).joinpath(f'{prefix}txt')
     csv_folder = pathlib.Path(base_dir).joinpath(f'{prefix}csv')
     excel_folder = pathlib.Path(base_dir).joinpath(f'{prefix}excel')
     json_folder = pathlib.Path(base_dir).joinpath(f'{prefix}json')
 
     # Fetch and write data to files
-    #fetch_and_write_txt_data(txt_folder, txt_filename, txt_url)
+    fetch_and_write_txt_data(txt_folder, txt_filename, txt_url)
     fetch_and_write_csv_data(csv_folder, csv_filename, csv_url)
     fetch_and_write_excel_data(excel_folder, excel_filename, excel_url)
     fetch_and_write_json_data(json_folder, json_filename, json_url)
 
     # Process the fetched data
-    #process_text_data(txt_folder, txt_filename, 'results_txt.txt')
+    process_text_data(txt_folder, txt_filename, 'results_txt.txt')
     process_csv_data(csv_folder, csv_filename, 'results_csv.txt')
     process_excel_data(excel_folder, excel_filename, 'results_xls.txt')
     process_json_data(json_folder, json_filename, 'results_json.txt')
