@@ -181,3 +181,31 @@ def fetch_and_write_json_data(folder_name, filename, url):
         write_json_file(folder_name, filename, json_data)
     else:
         print(f"Failed to fetch JSON data or incorrect content type: {response.status_code}")
+
+def process_json_data(folder_name, input_filename, output_filename):
+    # Read the JSON file
+    file_path = pathlib.Path(folder_name).joinpath(input_filename)
+    with file_path.open('r', encoding='utf-8') as file:
+        json_data = json.load(file)
+    
+    # Extract relevant information
+    summary = {}
+    summary['Number of Items'] = len(json_data)
+    
+    # Example: Extracting and summarizing information from the JSON data
+    if isinstance(json_data, list):
+        if len(json_data) > 0 and isinstance(json_data[0], dict):
+            keys = json_data[0].keys()
+            summary['Keys in JSON objects'] = list(keys)
+    
+    # Write the summary to an output text file
+    output_path = pathlib.Path(folder_name).joinpath(output_filename)
+    with output_path.open('w', encoding='utf-8') as output_file:
+        output_file.write(f"Summary of JSON Data:\n")
+        for key, value in summary.items():
+            if isinstance(value, str):
+                output_file.write(f"{key}:\n{value}\n\n")
+            else:
+                output_file.write(f"{key}: {value}\n")
+    
+    print(f"JSON data processing complete. Results saved to {output_path}")
