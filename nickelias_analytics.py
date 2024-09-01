@@ -39,14 +39,14 @@ def fetch_and_write_excel_data(folder_name, filename, url):
 
 
 def write_txt_file(folder_name, filename, data):
-    file_path = pathlib.Path(folder_name).join_path(filename) # use pathlib to join paths
-    with file_path.open('w') as file:
+    file_path = pathlib.Path(folder_name).joinpath(filename) # use pathlib to join paths
+    with file_path.open('w', encoding='utf-8') as file:
         file.write(data)
         print(f"Text data saved to {file_path}")
 
 
 def write_excel_file(folder_name, filename, data):
-    file_path = pathlib.Path(folder_name).join_path(filename) # use pathlib to join paths
+    file_path = pathlib.Path(folder_name).joinpath(filename) # use pathlib to join paths
     with open(file_path, 'wb') as file:
         file.write(data)
         print(f"Excel data saved to {file_path}")
