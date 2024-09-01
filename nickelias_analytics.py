@@ -26,47 +26,55 @@ import nickelias_project_setup
 import utils_nickelias
 
 
-# Configure logging
+# Configure logging to replace print statements and track program execution
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
+# Write data to a text file.
 def write_txt_file(folder_name, filename, data):
-    """Write data to a text file."""
     file_path = pathlib.Path(folder_name).joinpath(filename)
     try:
+        # Try opening the file and writing the data to it
         with file_path.open('w', encoding='utf-8') as file:
             file.write(data)
-        logging.info(f"Text data saved to {file_path}")
+        logging.info(f"Text data saved to {file_path}") # Log successful write operation
     except IOError as e:
         logging.error(f"Error writing text file {file_path}: {e}")
 
+# Fetch data from a URL and write it to a text file.
 def fetch_and_write_txt_data(folder_name, filename, url, verify=True):
     """Fetch data from a URL and write it to a text file."""
     try:
+        # Fetch the data from the URL, with SSL verification enabled
         response = requests.get(url, verify=True)  # Enable SSL verification
         response.raise_for_status()  # Raise HTTPError for bad responses
         response.encoding = 'utf-8'  # Ensure the response is interpreted as UTF-8
-        write_txt_file(folder_name, filename, response.text)
+        write_txt_file(folder_name, filename, response.text) # Save the fetched data to a text file
     except requests.RequestException as e:
+        # Log any errors encountered during data fetching
         logging.error(f"Failed to fetch data from {url}: {e}")
 
+# Process text data: count words and unique words, then save summary.
 def process_text_data(folder_name, input_filename, output_filename):
-    """Process text data: count words and unique words, then save summary."""
+    
     file_path = pathlib.Path(folder_name).joinpath(input_filename)
     try:
+        # Try opening the file and reading its contents
         with file_path.open('r', encoding='utf-8') as file:
             text = file.read()
     except IOError as e:
+        # Log any errors encountered during file reading and exit the function
         logging.error(f"Error reading text file {file_path}: {e}")
         return
 
     try:
+        # Extract words from the text and count occurrences
         words = re.findall(r'\b\w+\b', text.lower())
         unique_words = set(words)
         word_count = Counter(words)
         total_words = len(words)
         unique_word_count = len(unique_words)
 
+        # Write the summary of word counts to the output file
         output_path = pathlib.Path(folder_name).joinpath(output_filename)
         with output_path.open('w', encoding='utf-8') as output_file:
             output_file.write(f"Total Words: {total_words}\n")
@@ -78,8 +86,8 @@ def process_text_data(folder_name, input_filename, output_filename):
     except Exception as e:
         logging.error(f"Error processing text data: {e}")
 
+# Write data to a CSV file.
 def write_csv_file(folder_name, filename, data):
-    """Write data to a CSV file."""
     file_path = pathlib.Path(folder_name).joinpath(filename)
     try:
         with file_path.open('w', newline='', encoding='utf-8') as file:
@@ -89,11 +97,12 @@ def write_csv_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing CSV file {file_path}: {e}")
 
+# Fetch data from a URL and write it to a CSV file.
 def fetch_and_write_csv_data(folder_name, filename, url, verify=True):
-    """Fetch data from a URL and write it to a CSV file."""
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise HTTPError for bad responses
+        # Parse the CSV data and save it to a file
         csv_data = [row for row in csv.reader(response.text.splitlines())]
         write_csv_file(folder_name, filename, csv_data)
     except requests.RequestException as e:
@@ -101,8 +110,8 @@ def fetch_and_write_csv_data(folder_name, filename, url, verify=True):
     except csv.Error as e:
         logging.error(f"Error processing CSV data: {e}")
 
+# Process CSV data: count rows and summarize columns.
 def process_csv_data(folder_name, input_filename, output_filename):
-    """Process CSV data: count rows and summarize columns."""
     file_path = pathlib.Path(folder_name).joinpath(input_filename)
     try:
         row_count = 0
@@ -111,19 +120,21 @@ def process_csv_data(folder_name, input_filename, output_filename):
 
         with file_path.open('r', encoding='utf-8') as file:
             reader = csv.reader(file)
-            headers = next(reader)
+            headers = next(reader) # Read the header row
             column_summaries = ['Column Summary:'] + headers
 
             for row in reader:
-                row_count += 1
+                row_count += 1 # Count rows
                 data.append(tuple(row))
 
+        # Summarize each column by counting non-empty entries
         column_counts = [0] * len(headers)
         for row in data:
             for i, value in enumerate(row):
                 if value:
                     column_counts[i] += 1
 
+        # Write the summary to the output file
         output_path = pathlib.Path(folder_name).joinpath(output_filename)
         with output_path.open('w', encoding='utf-8') as output_file:
             output_file.write(f"Total Rows: {row_count}\n")
@@ -136,8 +147,9 @@ def process_csv_data(folder_name, input_filename, output_filename):
     except csv.Error as e:
         logging.error(f"Error processing CSV data: {e}")
 
+
+# Write data to an Excel file.
 def write_excel_file(folder_name, filename, data):
-    """Write data to an Excel file."""
     file_path = pathlib.Path(folder_name).joinpath(filename)
     try:
         with file_path.open('wb') as file:
@@ -146,8 +158,8 @@ def write_excel_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing Excel file {file_path}: {e}")
 
+# Fetch data from a URL and write it to an Excel file.
 def fetch_and_write_excel_data(folder_name, filename, url, verify=True):
-    """Fetch data from a URL and write it to an Excel file."""
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise HTTPError for bad responses
@@ -155,8 +167,8 @@ def fetch_and_write_excel_data(folder_name, filename, url, verify=True):
     except requests.RequestException as e:
         logging.error(f"Failed to fetch Excel data from {url}: {e}")
 
+# Process Excel data: summarize rows, columns, and numeric statistics.
 def process_excel_data(folder_name, input_filename, output_filename):
-    """Process Excel data: summarize rows, columns, and numeric statistics."""
     file_path = pathlib.Path(folder_name).joinpath(input_filename)
     try:
         df = pd.read_excel(file_path)
@@ -167,6 +179,7 @@ def process_excel_data(folder_name, input_filename, output_filename):
             'Numeric Column Statistics': df.describe().to_string()
         }
 
+        # Write the summary to the output file
         output_path = pathlib.Path(folder_name).joinpath(output_filename)
         with output_path.open('w', encoding='utf-8') as output_file:
             output_file.write(f"Summary of Excel Data:\n")
@@ -183,8 +196,9 @@ def process_excel_data(folder_name, input_filename, output_filename):
     except pd.errors.ExcelFileError as e:
         logging.error(f"Error reading Excel file {file_path}: {e}")
 
+
+# Write data to a JSON file.
 def write_json_file(folder_name, filename, data):
-    """Write data to a JSON file."""
     file_path = pathlib.Path(folder_name).joinpath(filename)
     try:
         with file_path.open('w', encoding='utf-8') as file:
@@ -193,8 +207,8 @@ def write_json_file(folder_name, filename, data):
     except IOError as e:
         logging.error(f"Error writing JSON file {file_path}: {e}")
 
+# Fetch data from a URL and write it to a JSON file.
 def fetch_and_write_json_data(folder_name, filename, url, verify=True):
-    """Fetch data from a URL and write it to a JSON file."""
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise HTTPError for bad responses
@@ -208,13 +222,14 @@ def fetch_and_write_json_data(folder_name, filename, url, verify=True):
     except json.JSONDecodeError as e:
         logging.error(f"Error decoding JSON data: {e}")
 
+# Process JSON data: count items and summarize keys in JSON objects.
 def process_json_data(folder_name, input_filename, output_filename):
-    """Process JSON data: count items and summarize keys in JSON objects."""
     file_path = pathlib.Path(folder_name).joinpath(input_filename)
     try:
         with file_path.open('r', encoding='utf-8') as file:
             json_data = json.load(file)
 
+        # Summarize the JSON data by counting the top-level keys and their types
         summary = {'Number of Items': len(json_data)}
 
         if isinstance(json_data, list) and len(json_data) > 0 and isinstance(json_data[0], dict):
@@ -235,8 +250,8 @@ def process_json_data(folder_name, input_filename, output_filename):
         logging.error(f"Error decoding JSON data: {e}")
 
 
+# Main function to demonstrate module capabilities.
 def main():
-    ''' Main function to demonstrate module capabilities. '''
 
     # Print byline from imported module
     print(f"Byline: {utils_nickelias.byline}")
