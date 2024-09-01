@@ -231,3 +231,41 @@ def process_json_data(folder_name, input_filename, output_filename):
         logging.error(f"Error reading JSON file {file_path}: {e}")
     except json.JSONDecodeError as e:
         logging.error(f"Error decoding JSON data: {e}")
+
+
+def main():
+    ''' Main function to demonstrate module capabilities. '''
+
+    # Define URLs for data fetching
+    txt_url = 'https://shakespeare.mit.edu/romeo_juliet/full.html'
+    csv_url = 'https://raw.githubusercontent.com/MainakRepositor/Datasets/master/World%20Happiness%20Data/2020.csv'
+    excel_url = 'https://github.com/bharathirajatut/sample-excel-dataset/raw/master/cattle.xls'
+    json_url = 'http://api.open-notify.org/astros.json'
+
+    # Define folder names and filenames for data storage
+    txt_folder_name = 'data-txt'
+    csv_folder_name = 'data-csv'
+    excel_folder_name = 'data-excel'
+    json_folder_name = 'data-json'
+
+    txt_filename = 'data.txt'
+    csv_filename = 'data.csv'
+    excel_filename = 'data.xls'
+    json_filename = 'data.json'
+
+    # Fetch and write data to files
+    fetch_and_write_txt_data(txt_folder_name, txt_filename, txt_url)
+    fetch_and_write_csv_data(csv_folder_name, csv_filename, csv_url)
+    fetch_and_write_excel_data(excel_folder_name, excel_filename, excel_url)
+    fetch_and_write_json_data(json_folder_name, json_filename, json_url)
+
+    # Process the fetched data
+    process_text_data(txt_folder_name, txt_filename, 'results_txt.txt')
+    process_csv_data(csv_folder_name, csv_filename, 'results_csv.txt')
+    process_excel_data(excel_folder_name, excel_filename, 'results_xls.txt')
+    process_json_data(json_folder_name, json_filename, 'results_json.txt')
+
+    print("Data fetching and processing complete.")
+
+if __name__ == "__main__":
+    main()
