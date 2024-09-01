@@ -134,10 +134,36 @@ def write_excel_file(folder_name, filename, data):
 def fetch_and_write_excel_data(folder_name, filename, url):
     response = requests.get(url)
     if response.status_code == 200:
-        # Call your write function to save the response content
         write_excel_file(folder_name,filename, response.content)
     else:
         print(f"Failed to fetch Excel data: {response.status_code}")
+
+def process_excel_data(folder_name, input_filename, output_filename):
+    # Read the Excel file
+    file_path = pathlib.Path(folder_name).joinpath(input_filename)
+    df = pd.read_excel(file_path)
+    
+    # Perform analysis
+    summary = {}
+    summary['Total Rows'] = len(df)
+    summary['Total Columns'] = len(df.columns)
+    summary['Column Names'] = list(df.columns)
+    
+    # Example of calculating basic statistics for numeric columns
+    numeric_summary = df.describe().to_string()
+    summary['Numeric Column Statistics'] = numeric_summary
+    
+    # Write the analysis to an output text file
+    output_path = pathlib.Path(folder_name).joinpath(output_filename)
+    with output_path.open('w', encoding='utf-8') as output_file:
+        output_file.write(f"Summary of Excel Data:\n")
+        for key, value in summary.items():
+            if isinstance(value, str):
+                output_file.write(f"{key}:\n{value}\n\n")
+            else:
+                output_file.write(f"{key}: {value}\n")
+    
+    print(f"Excel data processing complete. Results saved to {output_path}")
 
 
 # Function 4: Fetching data from a url and writing to a JSON file
